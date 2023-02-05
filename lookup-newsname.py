@@ -1,3 +1,6 @@
+import requests
+from bs4 import BeautifulSoup
+
 # Define the base url of the website
 BASE_URL = 'https://www2.nhk.or.jp/gogaku/gendaieigo/detail/index.html'
 
@@ -9,6 +12,11 @@ url = BASE_URL + "?no=" + date
 print(url)
 
 # Get the HTML file from the URL
+html = requests.get(url)
+
+# Read the HTML file using BeautifulSoup
+soup = BeautifulSoup(html.content, "html.parser")
+print(soup)
 
 # Specify the news title of from the file
 
