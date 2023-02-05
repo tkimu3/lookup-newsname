@@ -8,4 +8,8 @@ url = BASE_URL + "?no=" + date
 # Print the created url of the website
 print(url)
 
+# Get the HTML file from the URL
 
+# Specify the news title of from the file
+
+# Print the news title of the date
