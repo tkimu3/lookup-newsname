@@ -12,11 +12,6 @@ def create_url_from_date_query_param(base_url, query_param):
     url = base_url + query_param + date
     return url
 
-
-# Print the created url of the website
-url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM)
-print(url)
-
 def getHTMLcontents(url):
     # Get the HTML file from the URL
     html = requests.get(url)
@@ -24,7 +19,11 @@ def getHTMLcontents(url):
     content = BeautifulSoup(html.content, "html.parser")
     return content
 
+# Print the created url of the website
+url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM)
+print(url)
 
+# Get and Parse the HTML file from the URL
 soup = getHTMLcontents(url)
 
 # Specify the news title using class property
@@ -36,4 +35,3 @@ gendai_hd2_info__cat = soup.find(class_="gendai-hd2-info--cat")
 # Print the news title of the date
 print(gendai_hd2_info) # -> <div class ="gendai_hd2_info"></div>
 print(gendai_hd2_info__cat)# -> None
-
