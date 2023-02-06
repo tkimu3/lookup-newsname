@@ -35,3 +35,8 @@ gendai_hd2_info__cat = soup.find(class_="gendai-hd2-info--cat")
 # Print the news title of the date
 print(gendai_hd2_info) # -> <div class ="gendai_hd2_info"></div>
 print(gendai_hd2_info__cat)# -> None
+
+# Next Step
+# Use requests-html
+# https://gammasoft.jp/blog/how-to-download-web-page-created-javascript/
+
