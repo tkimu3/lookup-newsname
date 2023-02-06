@@ -16,8 +16,15 @@ html = requests.get(url)
 
 # Read the HTML file using BeautifulSoup
 soup = BeautifulSoup(html.content, "html.parser")
-print(soup)
+#print(soup)
 
-# Specify the news title of from the file
+# Specify the news title using class property
+# https://codezine.jp/article/detail/12230
+# I use "class_" instead of using "class" because it's reserved by Python
+gendai_hd2_info = soup.find(class_="gendai-hd2-info")
+gendai_hd2_info__cat = soup.find(class_="gendai-hd2-info--cat")
 
 # Print the news title of the date
+print(gendai_hd2_info) # -> <div class ="gendai_hd2_info"></div>
+print(gendai_hd2_info__cat)# -> None
+
