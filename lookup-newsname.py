@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 # Use requests_html
 from requests_html import HTMLSession, AsyncHTMLSession
 import asyncio, nest_asyncio
+import re
+from datetime import datetime
+
 
 # Define the base URL and Query Parameter of the website
 BASE_URL = 'https://www2.nhk.or.jp/gogaku/gendaieigo/detail/index.html'
@@ -20,6 +23,31 @@ def getHTMLcontents(url):
     # Read the HTML file using BeautifulSoup
     content = BeautifulSoup(html.content, "html.parser")
     return content
+
+# Pickup Japan datetime format from string
+def pickup_jpn_date(text):
+    s = text
+    pattern = r'\d{4}年\d{1,2}月\d{1,2}日'
+    jpn_date = re.findall(pattern, s)[0]
+    return jpn_date
+
+# Convert the strings of Japan datetime format to the datetime object using strptime method
+# https://atmarkit.itmedia.co.jp/ait/articles/2111/24/news019.html
+
+def convert_datetime_from_jpn(text):
+    date_obj = datetime.strptime(text, '%Y年%m月%d日').date()
+    return date_obj
+
+# replace space to underscore
+def replace_space_to_underscore(text):
+    words = text.split()
+    line = ''
+    for word in words:
+        if line:
+            line += word +"_"
+        else:
+            line += "_" + word
+    return line
 
 # Print the created url of the website
 url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM)
@@ -65,7 +93,36 @@ r = loop.run_until_complete(exec_js(url))
 
 # CSS Selector for the news title
 # wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--cat
-sel = '#wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--cat'
-element = r.html.find(sel, first=True)
-print(element.text)
+sel = '#wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--broadcast'
+all_elements = r.html
+elements = all_elements.find(sel, first = True).text
+lines = {}
+
+# Devide text elements into lines
+for i, line in enumerate(elements.split("\n")):
+    if i < 4:
+        lines[i] = line
+        # print('{}:{}'.format(i,lines[i]))
+        # print('---'*10)
+
+# Pickup aired date in Japan format from string
+jpn_air_date = pickup_jpn_date(lines[0])
+
+# Convert the strings of Japan datetime format to the datetime object using strptime method
+# https://atmarkit.itmedia.co.jp/ait/articles/2111/24/news019.html
+air_date = convert_datetime_from_jpn(jpn_air_date)
+
+# Pickup news date in Japan format from string
+jpn_news_date = pickup_jpn_date(lines[3])
+
+# Convert the strings of Japan datetime format to the datetime object using strptime method
+news_date = convert_datetime_from_jpn(jpn_news_date)
+
+# replace spaces in English title with underscore
+title = replace_space_to_underscore(lines[2])
+
+# make filename from date and title in the page
+filename = str(air_date) + title + str(news_date)
+print(filename)
+
 
