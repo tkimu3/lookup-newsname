@@ -98,7 +98,7 @@ all_elements = r.html
 elements = all_elements.find(sel, first = True).text
 lines = {}
 
-# Devide text elements into lines
+# Devide and save text elements into lines list
 for i, line in enumerate(elements.split("\n")):
     if i < 4:
         lines[i] = line
