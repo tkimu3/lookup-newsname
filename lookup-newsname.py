@@ -81,6 +81,10 @@ def replace_space_to_underscore(text):
 # start_date = input_date_start()
 # end_date = input_date_end()
 
+# Repeat for loop between the start date and end date
+# https://qiita.com/ground0state/items/508e479335d82728ef91
+
+
 
 # Print the created url of the website
 date = input_date()
