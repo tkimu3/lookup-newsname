@@ -6,11 +6,18 @@ import asyncio, nest_asyncio
 import re
 from datetime import datetime
 import urllib.parse
+import pandas as pd
 
 
 # Define the base URL and Query Parameter of the website
 BASE_URL = 'https://www2.nhk.or.jp/gogaku/gendaieigo/detail/index.html'
 QUERY_PARAM = '?no='
+
+# Define the CSS Selector for title(SEL) and movie(MOVIE_SEL)
+# wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--cat
+SEL = '#wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--broadcast'
+MOVIE_SEL = "#wp > div.gendai-hd2 > div > div.gendai-hd2-video > div > iframe"
+# movie_xpath = "/html/body/div[3]/div[4]/div/div[2]/div/iframe"
 
 def input_date_start():
     # Input date
@@ -26,6 +33,12 @@ def input_date():
     # Input date
     date = input("Input date:")
     return date
+
+# Validate date_string using pandas.to_datetime()
+# https://ja.stackoverflow.com/questions/90703/%E5%85%A5%E5%8A%9B%E3%81%95%E3%82%8C%E3%81%9F%E6%97%A5%E4%BB%98%E3%81%8C%E6%AD%A3%E3%81%97%E3%81%84%E3%82%82%E3%81%AE%E3%81%8B%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%99%E3%82%8B%E3%81%AB%E3%81%AF
+def validate_date_string(date_str):
+    return len(date_str) == 8 and \
+        pd.to_datetime(date_str, format='%Y%m%d', errors='coerce').date()
 
 def create_url_from_date_query_param(base_url, query_param, date):
     # Create the url to access the website for the date
@@ -64,8 +77,14 @@ def replace_space_to_underscore(text):
             line += "_" + word
     return line
 
+# Input Start and End date
+# start_date = input_date_start()
+# end_date = input_date_end()
+
+
 # Print the created url of the website
 date = input_date()
+print(validate_date_string(date))
 url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM,date)
 #print(url)
 
@@ -108,10 +127,8 @@ loop = asyncio.get_event_loop()
 r = loop.run_until_complete(exec_js(url))
 
 # CSS Selector for the news title
-# wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--cat
-sel = '#wp > div.gendai-hd2 > div > div > p.gendai-hd2-info--broadcast'
 all_elements = r.html
-elements = all_elements.find(sel, first = True).text
+elements = all_elements.find(SEL, first = True).text
 lines = {}
 
 # Devide and save text elements into lines list
@@ -142,9 +159,7 @@ filename = str(air_date) + title + str(news_date)
 print(filename)
 
 # Extract the iframe element that contains the news movie
-movie_sel = "#wp > div.gendai-hd2 > div > div.gendai-hd2-video > div > iframe"
-# movie_xpath = "/html/body/div[3]/div[4]/div/div[2]/div/iframe"
-iframe = all_elements.find(movie_sel, first=True)
+iframe = all_elements.find(MOVIE_SEL, first=True)
 print(iframe)
 
 # Get the 'src' attribute of the iframe dict

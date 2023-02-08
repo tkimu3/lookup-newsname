@@ -9,4 +9,5 @@ pip3 install requests
 pip3 install requests-html
 pip3 install asyncio
 pip3 install nest_asyncio
+pip3 install pandas
 ```
