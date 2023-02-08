@@ -5,6 +5,7 @@ from requests_html import HTMLSession, AsyncHTMLSession
 import asyncio, nest_asyncio
 import re
 from datetime import datetime
+import urllib.parse
 
 
 # Define the base URL and Query Parameter of the website
@@ -125,4 +126,20 @@ title = replace_space_to_underscore(lines[2])
 filename = str(air_date) + title + str(news_date)
 print(filename)
 
+# Extract the iframe element that contains the news movie
+movie_sel = "#wp > div.gendai-hd2 > div > div.gendai-hd2-video > div > iframe"
+# movie_xpath = "/html/body/div[3]/div[4]/div/div[2]/div/iframe"
+iframe = all_elements.find(movie_sel, first=True)
+print(iframe)
 
+# Get the 'src' attribute of the iframe dict
+video_src = iframe._attrs['src']
+
+# Get the base_url of the page
+base_url = iframe.base_url
+
+# Combine the base url and the iframe
+# https://ja.stackoverflow.com/questions/45558/web%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E3%82%BD%E3%83%BC%E3%82%B9%E3%81%AB%E8%B2%BC%E3%82%89%E3%82%8C%E3%81%9F%E3%83%AA%E3%83%B3%E3%82%AF%E5%85%88%E3%81%AEhtml%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B
+
+video_url = urllib.parse.urljoin(base_url, video_src)
+print(video_url)
