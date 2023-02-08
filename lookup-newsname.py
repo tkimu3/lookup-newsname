@@ -12,9 +12,23 @@ import urllib.parse
 BASE_URL = 'https://www2.nhk.or.jp/gogaku/gendaieigo/detail/index.html'
 QUERY_PARAM = '?no='
 
-def create_url_from_date_query_param(base_url, query_param):
-    # Input date and create the url to access the website for the date
+def input_date_start():
+    # Input date
+    date = input("Input start date\n From:")
+    return date
+
+def input_date_end():
+    # Input date
+    date = input("Input end date\n To:")
+    return date
+
+def input_date():
+    # Input date
     date = input("Input date:")
+    return date
+
+def create_url_from_date_query_param(base_url, query_param, date):
+    # Create the url to access the website for the date
     url = base_url + query_param + date
     return url
 
@@ -51,7 +65,8 @@ def replace_space_to_underscore(text):
     return line
 
 # Print the created url of the website
-url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM)
+date = input_date()
+url = create_url_from_date_query_param(BASE_URL,QUERY_PARAM,date)
 #print(url)
 
 # --- Using BeautifulSoup4 ---
